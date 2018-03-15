@@ -1,7 +1,6 @@
 FROM ubuntu:16.04 as builder
 
 RUN apt-get update && apt-get install -y git curl build-essential
-RUN curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 RUN curl -O https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz && \
     tar -xvf go1.9.1.linux-amd64.tar.gz && \
     mv go /usr/local
