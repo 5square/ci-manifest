@@ -35,18 +35,11 @@ jobs:
       - run:
           name: Inspect official alpine image for arm support
           command: |
-            manifest-tool inspect alpine:3.7
-            manifest-tool inspect alpine:3.7 \
-            | grep -Fq "Arch: arm" && \
-            echo arch arm found || \
-            exit 1
+            [ $(manifest-tool inspect alpine:3.7 | grep -c "Arch: arm") -eq 0 ] && exit 1 || echo arch arm found
       - run:
           name: Inspect official alpine image for amd64 support
           command: |
-            manifest-tool inspect alpine:3.7 \
-            | grep -Fq "Arch: amd64" && \
-            echo arch amd64 found || \
-            exit 1
+            [ $(manifest-tool inspect alpine:3.7 | grep -c "Arch: amd64") -eq 0 ] && exit 1 || echo arch amd64 found
 
 workflows:
   version: 2
