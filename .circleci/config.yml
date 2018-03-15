@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: docker:17.12.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build \
+              --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+              --build-arg VERSION=${CIRCLE_TAG} \
+              --build-arg VCS_URL=${CIRCLE_REPOSITORY_URL} \
+              --build-arg VCS_REF=${CIRCLE_SHA1} \
+              --build-arg BASE_IMAGE_NAMESPACE=arm32v6/ \
+              --build-arg BASE_IMAGE=alpine \
+              --build-arg BASE_IMAGE_TAG="3.7" \
+              -t ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} .
+      - run:
+          name: Login to Docker Hub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: Tag Image and Push
+          command: |
+            docker push ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
+            docker tag ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:latest
+            docker push ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:latest
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
