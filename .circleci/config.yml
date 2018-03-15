@@ -37,15 +37,15 @@ jobs:
           command: |
             manifest-tool inspect alpine:3.7
             manifest-tool inspect alpine:3.7 \
-            | grep -Fq "linux/arm" && \
-            echo arch linux/arm found || \
+            | grep -Fq "Arch: arm" && \
+            echo arch arm found || \
             exit 1
       - run:
           name: Inspect official alpine image for amd64 support
           command: |
             manifest-tool inspect alpine:3.7 \
-            | grep -Fq "linux/amd64" && \
-            echo arch linux/amd64 found || \
+            | grep -Fq "Arch: amd64" && \
+            echo arch amd64 found || \
             exit 1
 
 workflows:
