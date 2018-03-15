@@ -35,21 +35,21 @@ jobs:
       - run:
           name: Inspect official alpine image for arm support
           command: |
-          manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
             | grep -Fq "linux/arm" && \
             echo arch linux/arm found || \
             exit 1
       - run:
           name: Inspect official alpine image for amd64 support
           command: |
-          manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
             | grep -Fq "linux/amd64" && \
             echo arch linux/amd64 found || \
             exit 1
 
 workflows:
   version: 2
-  build:
+  build-and-push-and-test:
     jobs:
       - build:
         filters:
@@ -57,4 +57,4 @@ workflows:
             only: /.*/
       - test:
         requires:
-            - build
+          - build
