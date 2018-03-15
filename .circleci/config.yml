@@ -26,12 +26,35 @@ jobs:
             docker push ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
             docker tag ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:latest
             docker push ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:latest
+  test:
+    working_directory: /app
+    docker:
+      - image: homesmarthome/ci-manifest:latest
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Inspect official alpine image for arm support
+          command: |
+          manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            | grep -Fq "linux/arm" && \
+            echo arch linux/arm found || \
+            exit 1
+      - run:
+          name: Inspect official alpine image for amd64 support
+          command: |
+          manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            | grep -Fq "linux/amd64" && \
+            echo arch linux/amd64 found || \
+            exit 1
 
 workflows:
   version: 2
   build:
     jobs:
       - build:
-          filters:
-            tags:
-              only: /.*/
+        filters:
+          tags:
+            only: /.*/
+      - test:
+        requires:
+            - build
