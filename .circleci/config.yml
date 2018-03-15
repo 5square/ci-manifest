@@ -35,14 +35,15 @@ jobs:
       - run:
           name: Inspect official alpine image for arm support
           command: |
-            manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            manifest-tool inspect alpine:3.7
+            manifest-tool inspect alpine:3.7 \
             | grep -Fq "linux/arm" && \
             echo arch linux/arm found || \
             exit 1
       - run:
           name: Inspect official alpine image for amd64 support
           command: |
-            manifest-tool inspect ${DOCKER_IMAGE_NAMESPACE}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG} \
+            manifest-tool inspect alpine:3.7 \
             | grep -Fq "linux/amd64" && \
             echo arch linux/amd64 found || \
             exit 1
