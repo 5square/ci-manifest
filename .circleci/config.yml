@@ -52,6 +52,6 @@ workflows:
   build-and-push-and-test:
     jobs:
       - build:
-        filters:
-          tags:
-            only: /.*/
+          filters:
+            tags:
+              only: /.*/
